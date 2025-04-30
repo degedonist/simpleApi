@@ -35,8 +35,8 @@ func main() {
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
 
-	e.GET("/", getHandler)
-	e.POST("/", postHandler)
+	e.GET("/tasks", getHandler)
+	e.POST("/tasks", postHandler)
 
 	e.Start("localhost:8080")
 }
