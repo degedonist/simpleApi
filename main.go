@@ -21,7 +21,7 @@ func postHandler(c echo.Context) error {
 	}
 	req.ID = uuid.New().String()
 	tasks = append(tasks, req)
-	return c.JSON(http.StatusCreated, "Task added")
+	return c.JSON(http.StatusCreated, req)
 }
 
 func getHandler(c echo.Context) error {
