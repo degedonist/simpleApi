@@ -32,6 +32,11 @@ type Task struct {
 	IsDone bool   `json:"is_done"`
 }
 
+type RequestBody struct {
+	Task   string `json:"task"`
+	IsDone bool   `json:"is_done"`
+}
+
 func postHandler(c echo.Context) error {
 	var req Task
 	if err := c.Bind(&req); err != nil {
@@ -43,7 +48,7 @@ func postHandler(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, "Failed to add task")
 	}
 
-	return c.JSON(http.StatusCreated, "Task added")
+	return c.JSON(http.StatusCreated, req)
 }
 
 func getHandler(c echo.Context) error {
@@ -62,7 +67,7 @@ func getHandler(c echo.Context) error {
 func patchHandler(c echo.Context) error {
 	id := c.Param("id")
 
-	var req Task
+	var req RequestBody
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, "Invalid task")
 	}
