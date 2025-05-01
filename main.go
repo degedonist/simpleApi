@@ -42,7 +42,7 @@ func patchHandler(c echo.Context) error {
 	for i, task := range tasks {
 		if task.ID == id {
 			tasks[i].Task = req.Task
-			return c.JSON(http.StatusCreated, "Task updated")
+			return c.JSON(http.StatusCreated, tasks[i])
 		}
 	}
 
