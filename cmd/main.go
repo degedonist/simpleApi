@@ -3,6 +3,7 @@ package main
 import (
 	"firstCoursePractice/internal/db"
 	"firstCoursePractice/internal/handlers"
+	"firstCoursePractice/internal/repository"
 	"firstCoursePractice/internal/taskService"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -15,7 +16,7 @@ func main() {
 		log.Fatalf("Could not connect to database: %v", err)
 	}
 
-	taskRepo := taskService.NewTaskRepository(database)
+	taskRepo := repository.NewTaskRepository(database)
 	taskService := taskService.NewTaskService(taskRepo)
 	taskHandlers := handlers.NewTaskHandler(taskService)
 

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"firstCoursePractice/internal/models"
 	"firstCoursePractice/internal/taskService"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -24,7 +25,7 @@ func (h *taskHandler) GetTasks(c echo.Context) error {
 }
 
 func (h *taskHandler) AddTask(c echo.Context) error {
-	var req taskService.RequestBody
+	var req models.RequestBody
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, "Invalid request")
 	}
@@ -40,7 +41,7 @@ func (h *taskHandler) AddTask(c echo.Context) error {
 func (h *taskHandler) UpdateTask(c echo.Context) error {
 	id := c.Param("id")
 
-	var req taskService.RequestBody
+	var req models.RequestBody
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, "Invalid request")
 	}
