@@ -5,6 +5,7 @@ import (
 	"firstCoursePractice/internal/handlers"
 	"firstCoursePractice/internal/repository"
 	"firstCoursePractice/internal/taskService"
+	"firstCoursePractice/internal/web/tasks"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"log"
@@ -24,11 +25,10 @@ func main() {
 
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
-	e.GET("/tasks", taskHandlers.GetTasks)
-	e.POST("/tasks", taskHandlers.AddTask)
-	e.PATCH("/tasks/:id", taskHandlers.UpdateTask)
-	e.DELETE("/tasks/:id", taskHandlers.DeleteTask)
+	strictHandler := tasks.NewStrictHandler(taskHandlers, nil)
+	tasks.RegisterHandlers(e, strictHandler)
 
 	e.Start("localhost:8080")
 }

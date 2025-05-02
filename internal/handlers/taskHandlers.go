@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"context"
 	"firstCoursePractice/internal/models"
 	"firstCoursePractice/internal/taskService"
+	"firstCoursePractice/internal/web/tasks"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -15,27 +17,47 @@ func NewTaskHandler(service taskService.TaskService) *taskHandler {
 	return &taskHandler{service: service}
 }
 
-func (h *taskHandler) GetTasks(c echo.Context) error {
-	tasks, err := h.service.GetAllTasks()
+func (h *taskHandler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject) (tasks.GetTasksResponseObject, error) {
+	allTasks, err := h.service.GetAllTasks()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "Could not get tasks")
+		return nil, err
 	}
 
-	return c.JSON(http.StatusOK, tasks)
+	response := tasks.GetTasks200JSONResponse{}
+
+	for _, receivedTask := range allTasks {
+		task := tasks.Task{
+			Id:     &receivedTask.ID,
+			Task:   &receivedTask.Task,
+			IsDone: &receivedTask.IsDone,
+		}
+
+		response = append(response, task)
+	}
+
+	return response, nil
 }
 
-func (h *taskHandler) AddTask(c echo.Context) error {
-	var req models.RequestBody
-	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, "Invalid request")
+func (h *taskHandler) AddTask(_ context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error) {
+	req := request.Body
+
+	taskToCreate := models.RequestBody{
+		Task:   *req.Task,
+		IsDone: *req.IsDone,
 	}
 
-	task, err := h.service.CreateTask(req)
+	task, err := h.service.CreateTask(taskToCreate)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "Could not create task")
+		return nil, err
 	}
 
-	return c.JSON(http.StatusOK, task)
+	response := tasks.PostTasks201JSONResponse{
+		Id:     &task.ID,
+		Task:   &task.Task,
+		IsDone: &task.IsDone,
+	}
+
+	return response, nil
 }
 
 func (h *taskHandler) UpdateTask(c echo.Context) error {
