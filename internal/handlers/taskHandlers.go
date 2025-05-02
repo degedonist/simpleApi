@@ -5,8 +5,6 @@ import (
 	"firstCoursePractice/internal/models"
 	"firstCoursePractice/internal/taskService"
 	"firstCoursePractice/internal/web/tasks"
-	"github.com/labstack/echo/v4"
-	"net/http"
 )
 
 type taskHandler struct {
@@ -38,7 +36,7 @@ func (h *taskHandler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject)
 	return response, nil
 }
 
-func (h *taskHandler) AddTask(_ context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error) {
+func (h *taskHandler) PostTasks(_ context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error) {
 	req := request.Body
 
 	taskToCreate := models.RequestBody{
@@ -60,29 +58,38 @@ func (h *taskHandler) AddTask(_ context.Context, request tasks.PostTasksRequestO
 	return response, nil
 }
 
-func (h *taskHandler) UpdateTask(c echo.Context) error {
-	id := c.Param("id")
+func (h *taskHandler) PatchTasksId(_ context.Context, request tasks.PatchTasksIdRequestObject) (tasks.PatchTasksIdResponseObject, error) {
+	id := request.Id
+	req := request.Body
 
-	var req models.RequestBody
-	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, "Invalid request")
+	taskToUpdate := models.RequestBody{
+		Task:   *req.Task,
+		IsDone: *req.IsDone,
 	}
 
-	updatedTask, err := h.service.UpdateTask(id, req)
+	updatedTask, err := h.service.UpdateTask(id, taskToUpdate)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "Could not update task")
+		return nil, err
 	}
 
-	return c.JSON(http.StatusOK, updatedTask)
+	response := tasks.PatchTasksId200JSONResponse{
+		Id:     &updatedTask.ID,
+		Task:   &updatedTask.Task,
+		IsDone: &updatedTask.IsDone,
+	}
+
+	return response, nil
 }
 
-func (h *taskHandler) DeleteTask(c echo.Context) error {
-	id := c.Param("id")
+func (h *taskHandler) DeleteTasksId(_ context.Context, request tasks.DeleteTasksIdRequestObject) (tasks.DeleteTasksIdResponseObject, error) {
+	id := request.Id
 
 	err := h.service.DeleteTask(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "Could not delete task")
+		return nil, err
 	}
 
-	return c.NoContent(http.StatusNoContent)
+	response := tasks.DeleteTasksId204Response{}
+
+	return response, nil
 }
