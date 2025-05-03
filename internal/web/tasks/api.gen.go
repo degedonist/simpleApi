@@ -14,12 +14,6 @@ import (
 	strictecho "github.com/oapi-codegen/runtime/strictmiddleware/echo"
 )
 
-// RequestBody defines model for RequestBody.
-type RequestBody struct {
-	IsDone *bool   `json:"is_done,omitempty"`
-	Task   *string `json:"task,omitempty"`
-}
-
 // Task defines model for Task.
 type Task struct {
 	Id     *string `json:"id,omitempty"`
@@ -27,11 +21,17 @@ type Task struct {
 	Task   *string `json:"task,omitempty"`
 }
 
+// TaskRequest defines model for TaskRequest.
+type TaskRequest struct {
+	IsDone *bool   `json:"is_done,omitempty"`
+	Task   *string `json:"task,omitempty"`
+}
+
 // PostTasksJSONRequestBody defines body for PostTasks for application/json ContentType.
-type PostTasksJSONRequestBody = RequestBody
+type PostTasksJSONRequestBody = TaskRequest
 
 // PatchTasksIdJSONRequestBody defines body for PatchTasksId for application/json ContentType.
-type PatchTasksIdJSONRequestBody = RequestBody
+type PatchTasksIdJSONRequestBody = TaskRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {

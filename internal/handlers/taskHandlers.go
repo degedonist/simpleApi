@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"firstCoursePractice/internal/models"
 	"firstCoursePractice/internal/taskService"
 	"firstCoursePractice/internal/web/tasks"
 )
@@ -39,7 +38,7 @@ func (h *taskHandler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject)
 func (h *taskHandler) PostTasks(_ context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error) {
 	req := request.Body
 
-	taskToCreate := models.RequestBody{
+	taskToCreate := taskService.TaskRequest{
 		Task:   *req.Task,
 		IsDone: *req.IsDone,
 	}
@@ -62,7 +61,7 @@ func (h *taskHandler) PatchTasksId(_ context.Context, request tasks.PatchTasksId
 	id := request.Id
 	req := request.Body
 
-	taskToUpdate := models.RequestBody{
+	taskToUpdate := taskService.TaskRequest{
 		Task:   *req.Task,
 		IsDone: *req.IsDone,
 	}
