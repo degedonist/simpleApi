@@ -30,5 +30,8 @@ func main() {
 	strictHandler := tasks.NewStrictHandler(taskHandlers, nil)
 	tasks.RegisterHandlers(e, strictHandler)
 
-	e.Start("localhost:8080")
+	startErr := e.Start("localhost:8080")
+	if startErr != nil {
+		log.Fatalf("Could not start server: %v", startErr)
+	}
 }
