@@ -1,10 +1,14 @@
 package userService
 
-import "gorm.io/gorm"
+import (
+	"firstCoursePractice/internal/taskService"
+	"gorm.io/gorm"
+)
 
 type UserRepository interface {
 	GetAllUsers() ([]User, error)
 	GetUserById(id string) (User, error)
+	GetTasksForUser(userID string) ([]taskService.Task, error)
 	CreateUser(user User) error
 	UpdateUser(user User) error
 	DeleteUser(id string) error
@@ -28,6 +32,12 @@ func (u *userRepository) GetUserById(id string) (User, error) {
 	var user User
 	err := u.db.First(&user, "id = ?", id).Error
 	return user, err
+}
+
+func (u *userRepository) GetTasksForUser(userID string) ([]taskService.Task, error) {
+	var tasks []taskService.Task
+	err := u.db.Find(&tasks, "user_id = ?", userID).Error
+	return tasks, err
 }
 
 func (u *userRepository) CreateUser(user User) error {

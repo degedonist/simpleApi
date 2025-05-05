@@ -2,12 +2,14 @@ package userService
 
 import (
 	"errors"
+	"firstCoursePractice/internal/taskService"
 	"github.com/google/uuid"
 )
 
 type UserService interface {
 	GetAllUsers() ([]User, error)
 	GetUserById(id string) (User, error)
+	GetTasksForUser(userID string) ([]taskService.Task, error)
 	CreateUser(req UserRequest) (User, error)
 	UpdateUser(id string, req UserRequest) (User, error)
 	DeleteUser(id string) error
@@ -27,6 +29,17 @@ func (u *userService) GetAllUsers() ([]User, error) {
 
 func (u *userService) GetUserById(id string) (User, error) {
 	return u.repo.GetUserById(id)
+}
+
+func (u *userService) GetTasksForUser(userID string) ([]taskService.Task, error) {
+	var allTasks []taskService.Task
+
+	allTasks, err := u.repo.GetTasksForUser(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return allTasks, nil
 }
 
 func (u *userService) CreateUser(req UserRequest) (User, error) {

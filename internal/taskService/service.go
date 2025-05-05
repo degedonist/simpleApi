@@ -7,7 +7,7 @@ import (
 
 type TaskService interface {
 	CreateTask(req TaskRequest) (Task, error)
-	GetAllTasks() ([]Task, error)
+	GetTasks() ([]Task, error)
 	GetTaskByID(id string) (Task, error)
 	UpdateTask(id string, req TaskRequest) (Task, error)
 	DeleteTask(id string) error
@@ -31,6 +31,7 @@ func (s *taskService) CreateTask(req TaskRequest) (Task, error) {
 	task.ID = uuid.New().String()
 	task.Task = req.Task
 	task.IsDone = req.IsDone
+	task.UserID = req.UserID
 
 	if err := s.repo.CreateTask(task); err != nil {
 		return Task{}, err
@@ -39,8 +40,8 @@ func (s *taskService) CreateTask(req TaskRequest) (Task, error) {
 	return task, nil
 }
 
-func (s *taskService) GetAllTasks() ([]Task, error) {
-	return s.repo.GetAllTasks()
+func (s *taskService) GetTasks() ([]Task, error) {
+	return s.repo.GetTasks()
 }
 
 func (s *taskService) GetTaskByID(id string) (Task, error) {

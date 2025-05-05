@@ -6,7 +6,7 @@ import (
 
 type TaskRepository interface {
 	CreateTask(task Task) error
-	GetAllTasks() ([]Task, error)
+	GetTasks() ([]Task, error)
 	GetTaskByID(id string) (Task, error)
 	UpdateTask(task Task) error
 	DeleteTask(id string) error
@@ -24,7 +24,7 @@ func (r *taskRepository) CreateTask(task Task) error {
 	return r.db.Create(&task).Error
 }
 
-func (r *taskRepository) GetAllTasks() ([]Task, error) {
+func (r *taskRepository) GetTasks() ([]Task, error) {
 	var tasks []Task
 	err := r.db.Find(&tasks).Error
 	return tasks, err
