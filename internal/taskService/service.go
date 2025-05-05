@@ -2,28 +2,30 @@ package taskService
 
 import (
 	"errors"
-	"firstCoursePractice/internal/models"
-	"firstCoursePractice/internal/repository"
 	"github.com/google/uuid"
 )
 
 type TaskService interface {
-	CreateTask(req models.RequestBody) (models.Task, error)
-	GetAllTasks() ([]models.Task, error)
-	GetTaskByID(id string) (models.Task, error)
-	UpdateTask(id string, req models.RequestBody) (models.Task, error)
+	CreateTask(req TaskRequest) (Task, error)
+	GetAllTasks() ([]Task, error)
+	GetTaskByID(id string) (Task, error)
+	UpdateTask(id string, req TaskRequest) (Task, error)
 	DeleteTask(id string) error
 }
 
 type taskService struct {
-	repo repository.TaskRepository
+	repo TaskRepository
 }
 
-func (s *taskService) CreateTask(req models.RequestBody) (models.Task, error) {
-	var task models.Task
+func NewTaskService(repo TaskRepository) TaskService {
+	return &taskService{repo: repo}
+}
+
+func (s *taskService) CreateTask(req TaskRequest) (Task, error) {
+	var task Task
 
 	if req.Task == "" {
-		return models.Task{}, errors.New("task can't be empty")
+		return Task{}, errors.New("task can't be empty")
 	}
 
 	task.ID = uuid.New().String()
@@ -31,35 +33,35 @@ func (s *taskService) CreateTask(req models.RequestBody) (models.Task, error) {
 	task.IsDone = req.IsDone
 
 	if err := s.repo.CreateTask(task); err != nil {
-		return models.Task{}, err
+		return Task{}, err
 	}
 
 	return task, nil
 }
 
-func (s *taskService) GetAllTasks() ([]models.Task, error) {
+func (s *taskService) GetAllTasks() ([]Task, error) {
 	return s.repo.GetAllTasks()
 }
 
-func (s *taskService) GetTaskByID(id string) (models.Task, error) {
+func (s *taskService) GetTaskByID(id string) (Task, error) {
 	return s.repo.GetTaskByID(id)
 }
 
-func (s *taskService) UpdateTask(id string, req models.RequestBody) (models.Task, error) {
+func (s *taskService) UpdateTask(id string, req TaskRequest) (Task, error) {
 	if req.Task == "" {
-		return models.Task{}, errors.New("task can't be empty")
+		return Task{}, errors.New("task can't be empty")
 	}
 
 	task, err := s.repo.GetTaskByID(id)
 	if err != nil {
-		return models.Task{}, err
+		return Task{}, err
 	}
 
 	task.Task = req.Task
 	task.IsDone = req.IsDone
 
 	if err := s.repo.UpdateTask(task); err != nil {
-		return models.Task{}, err
+		return Task{}, err
 	}
 
 	return task, nil
@@ -67,8 +69,4 @@ func (s *taskService) UpdateTask(id string, req models.RequestBody) (models.Task
 
 func (s *taskService) DeleteTask(id string) error {
 	return s.repo.DeleteTask(id)
-}
-
-func NewTaskService(r repository.TaskRepository) TaskService {
-	return &taskService{repo: r}
 }

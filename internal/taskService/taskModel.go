@@ -1,4 +1,4 @@
-package models
+package taskService
 
 type Task struct {
 	ID     string `json:"id"`
@@ -6,7 +6,7 @@ type Task struct {
 	IsDone bool   `json:"is_done"`
 }
 
-type RequestBody struct {
+type TaskRequest struct {
 	Task   string `json:"task"`
 	IsDone bool   `json:"is_done"`
 }
